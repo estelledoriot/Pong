@@ -4,7 +4,9 @@ Il faut rattrapper la balle avec la raquette
 
 import pygame
 
-from elements import Balle, Raquette, RaquetteAutomatique, ScoreBoard
+from ball import Ball
+from board import Board, Position
+from score import ScoreBoard
 
 # TODO Ajouter le menu pour choisir de jouer à 1 ou 2 joueurs
 # TODO Améliorer le mouvement de la raquette automatique
@@ -27,42 +29,42 @@ class Pong:
         pygame.display.set_caption("Pong")
         self.clock = pygame.time.Clock()
 
-        self.balle: Balle = Balle(30)
-        self.raquette_gauche: Raquette = Raquette(
-            "gauche", pygame.Color(0, 0, 255), pygame.K_a, pygame.K_q
+        self.balle: Ball = Ball(30, (self.largeur // 2, self.hauteur // 2))
+        self.raquette_gauche: Board = Board(
+            Position.GAUCHE, pygame.Color(0, 0, 255), pygame.K_a, pygame.K_q
         )
-        self.raquette_droite: Raquette = Raquette(
-            "droite", pygame.Color(255, 0, 0), pygame.K_p, pygame.K_m
+        self.raquette_droite: Board = Board(
+            Position.DROITE, pygame.Color(255, 0, 0), pygame.K_p, pygame.K_m
         )
 
         self.scores: ScoreBoard = ScoreBoard()
 
     def tour(self) -> None:
         """Un tour du jeu"""
+        # mouvements des raquettes
+        self.raquette_gauche.update()
+        self.raquette_droite.update()
+
         # point gagné
         if self.balle.marque_joueur_droite():
             self.scores.point_joueur_droit()
-            self.balle.relance()
+            self.balle = Ball(30, (self.largeur // 2, self.hauteur // 2))
         if self.balle.marque_joueur_gauche():
             self.scores.point_joueur_gauche()
-            self.balle.relance()
+            self.balle = Ball(30, (self.largeur // 2, self.hauteur // 2))
 
         # rebond sur une raquette
         if pygame.sprite.collide_rect(
             self.balle, self.raquette_gauche
         ) or pygame.sprite.collide_rect(self.balle, self.raquette_droite):
-            self.balle.rebond_vertical()
+            self.balle.vertical_bounce()
 
         # rebond sur un mur
         if self.balle.touche_murs():
-            self.balle.rebond_horizontal()
-
-        # mouvements des raquettes
-        self.raquette_gauche.deplacement(self.balle.hauteur)
-        self.raquette_droite.deplacement(self.balle.hauteur)
+            self.balle.horizontal_bounce()
 
         # mouvement de la balle
-        self.balle.avance()
+        self.balle.move()
 
     def affichage(self) -> None:
         """Affichage des éléments du jeu de Pong"""
@@ -80,8 +82,8 @@ class Pong:
         pygame.draw.circle(
             self.fenetre, blanc, (self.largeur // 2, self.hauteur // 2), 80, 2
         )
-        self.raquette_gauche.draw()
-        self.raquette_droite.draw()
+        self.raquette_gauche.draw(self.fenetre)
+        self.raquette_droite.draw(self.fenetre)
         self.balle.draw()
         self.scores.draw()
 
