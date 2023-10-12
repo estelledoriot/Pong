@@ -14,6 +14,7 @@ class Ball(pygame.sprite.Sprite):
 
     def __init__(self, size: int, position: tuple[int, int]) -> None:
         super().__init__()
+        self.screen_width, self.screen_height = pygame.display.get_window_size()
 
         # ball
         self.rect: pygame.rect.Rect = pygame.Rect(0, 0, size, size)
@@ -24,15 +25,12 @@ class Ball(pygame.sprite.Sprite):
         self.speed_x: int = 7 * choice((-1, 1))
         self.speed_y: int = 7 * choice((-1, 1))
 
-    @property
-    def y_position(self) -> int:
-        """Hauteur du centre de la balle"""
-        return self.rect.centery
-
     def move(self) -> None:
         """Fait avancer la balle selon sa vitesse"""
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
+
+    # TODO faire un rebond sur une raquette qui change la direction de la balle en fonction de la distance au centre de la raquette
 
     def horizontal_bounce(self) -> None:
         """Rebondit sur une surface horizontale"""
@@ -42,30 +40,18 @@ class Ball(pygame.sprite.Sprite):
         """Rebondit sur une surface verticale"""
         self.speed_x *= -1
 
-    def marque_joueur_droite(self) -> bool:
-        """Vérifie si le joueur 2 a marqué"""
-        return self.rect.left <= 0
+    def touch_left_border(self) -> bool:
+        """Vérifie si la balle touche le bord gauche"""
+        return self.rect.left < 0
 
-    def marque_joueur_gauche(self) -> bool:
+    def touch_right_border(self) -> bool:
         """Vérifie si le joueur 1 a marqué"""
-        largeur, _ = pygame.display.get_window_size()
-        return self.rect.right >= largeur
+        return self.rect.right > self.screen_width
 
-    def touche_murs(self) -> bool:
+    def touch_horizontal_border(self) -> bool:
         """Vérifie si la balle touche un mur horizontal"""
-        _, hauteur = pygame.display.get_window_size()
-        return self.rect.top <= 0 or self.rect.bottom >= hauteur
+        return self.rect.top < 0 or self.rect.bottom > self.screen_height
 
-    def relance(self) -> None:
-        """Relance la balle à partir du milieu"""
-        largeur, hauteur = pygame.display.get_window_size()
-        self.rect.center = largeur // 2, hauteur // 2
-        self.speed_x: int = 7 * choice((-1, 1))
-        self.speed_y: int = 7 * choice((-1, 1))
-
-    # TODO faire un rebond sur une raquette qui change la direction de la balle en fonction de la distance au centre de la raquette
-
-    def draw(self) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Dessine la balle à l'écran"""
-        fenetre = pygame.display.get_surface()
-        pygame.draw.ellipse(fenetre, self.color, self.rect)
+        pygame.draw.ellipse(screen, self.color, self.rect)

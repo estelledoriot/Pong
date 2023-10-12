@@ -45,11 +45,18 @@ class Pong:
         self.raquette_gauche.update()
         self.raquette_droite.update()
 
+        # mouvement de la balle
+        self.balle.move()
+
+        # rebond sur un mur
+        if self.balle.touch_horizontal_border():
+            self.balle.horizontal_bounce()
+
         # point gagné
-        if self.balle.marque_joueur_droite():
+        if self.balle.touch_left_border():
             self.scores.point_joueur_droit()
             self.balle = Ball(30, (self.largeur // 2, self.hauteur // 2))
-        if self.balle.marque_joueur_gauche():
+        if self.balle.touch_right_border():
             self.scores.point_joueur_gauche()
             self.balle = Ball(30, (self.largeur // 2, self.hauteur // 2))
 
@@ -58,13 +65,6 @@ class Pong:
             self.balle, self.raquette_gauche
         ) or pygame.sprite.collide_rect(self.balle, self.raquette_droite):
             self.balle.vertical_bounce()
-
-        # rebond sur un mur
-        if self.balle.touche_murs():
-            self.balle.horizontal_bounce()
-
-        # mouvement de la balle
-        self.balle.move()
 
     def affichage(self) -> None:
         """Affichage des éléments du jeu de Pong"""
@@ -84,7 +84,7 @@ class Pong:
         )
         self.raquette_gauche.draw(self.fenetre)
         self.raquette_droite.draw(self.fenetre)
-        self.balle.draw()
+        self.balle.draw(self.fenetre)
         self.scores.draw()
 
     def jouer(self) -> None:
