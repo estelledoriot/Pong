@@ -11,13 +11,17 @@ class ScoreBoard:
     def __init__(self) -> None:
         self.score_gauche = 0
         self.score_droit = 0
-        self.police: pygame.font.Font = pygame.font.Font("font/homespun.ttf", 30)
+        self.police: pygame.font.Font = pygame.font.Font(
+            "font/homespun.ttf", 30
+        )
 
         fenetre = pygame.display.get_surface()
         self.surface: pygame.Surface = self.police.render(
             self.texte, True, pygame.Color(240, 240, 240)
         )
-        self.rect = self.surface.get_rect(center=(fenetre.get_width() // 2, 50))
+        self.rect = self.surface.get_rect(
+            center=(fenetre.get_width() // 2, 50)
+        )
 
     @property
     def texte(self) -> str:
@@ -35,5 +39,7 @@ class ScoreBoard:
     def draw(self) -> None:
         """Affiche le score"""
         fenetre = pygame.display.get_surface()
-        self.surface = self.police.render(self.texte, True, pygame.Color(240, 240, 240))
+        self.surface = self.police.render(
+            self.texte, True, pygame.Color(240, 240, 240)
+        )
         fenetre.blit(self.surface, self.rect)

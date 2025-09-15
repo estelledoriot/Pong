@@ -26,7 +26,9 @@ class Board(pygame.sprite.Sprite):
         super().__init__()
 
         # dimensions
-        self.screen_width, self.screen_height = pygame.display.get_window_size()
+        self.screen_width, self.screen_height = (
+            pygame.display.get_window_size()
+        )
         board_width, board_height = 20, 150
         gap = 50
 
@@ -35,7 +37,10 @@ class Board(pygame.sprite.Sprite):
         if position == Position.GAUCHE:
             self.rect.midleft = gap, self.screen_height // 2
         if position == Position.DROITE:
-            self.rect.midright = self.screen_width - gap, self.screen_height // 2
+            self.rect.midright = (
+                self.screen_width - gap,
+                self.screen_height // 2,
+            )
         self.color: pygame.Color = color
 
         # speed

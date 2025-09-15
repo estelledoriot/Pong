@@ -1,6 +1,7 @@
 """
 Contient les éléments du jeu: balle, raquette
 """
+
 from random import choice
 
 import pygame
@@ -14,7 +15,9 @@ class Ball(pygame.sprite.Sprite):
 
     def __init__(self, size: int, position: tuple[int, int]) -> None:
         super().__init__()
-        self.screen_width, self.screen_height = pygame.display.get_window_size()
+        self.screen_width, self.screen_height = (
+            pygame.display.get_window_size()
+        )
 
         # ball
         self.rect: pygame.rect.Rect = pygame.Rect(0, 0, size, size)
